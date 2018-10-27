@@ -1,6 +1,6 @@
 // Tokens
-%token 
-  INT  
+%token
+  INT
   VAR
   PLUS
   MINUS
@@ -14,10 +14,27 @@
   EQUALS
   ATRIBFLOAT
   ATRIBINT
- 
+  T_MAIN
+  T_FOR
+  T_WHILE
+  T_SCANF
+  T_PRINTF
+  T_IF
+  T_ELSE
+  T_OPENCURLYBRACKET
+  T_CLOSECURLYBRACKET
+  T_OPENPARENTESES
+  T_CLOSEPARENTESES
+  T_SEMICOLUMN
+  T_AND
+  T_OR
+  T_NOT
+  T_INCREMENT
+  T_DECREMENT
 
 // Operator associativity & precedence
-
+//so pus aqui as tokens todas ainda nao tem as precedencias corretas
+%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLUMN T_AND T_OR T_NOT T_INCREMENT T_DECREMENT
 %left GREATER GREATERTHAN LESS LESSTHAN EQUALS
 %left PLUS MINUS
 %left DIV MULT MOD
@@ -58,14 +75,14 @@ BoolExpr* root;
 %%
 
 
-program: 
+program:
   boolexpr { root = $1; }
   |
   atrib: { root = $1}
 
 atrib:
   ATRIBFLOAT NAME EQUALSIGN expr{
-    $$ = 
+    $$ =
   }
   |
   ATRIBFLOAT NAME EQUALSIGN FLOAT {
@@ -92,13 +109,13 @@ boolexpr:
     $$ = ast_boolean_expr(EQUALS, $1, $3);
   }
 
-expr: 
-  INT { 
-    $$ = ast_integer($1); 
+expr:
+  INT {
+    $$ = ast_integer($1);
   }
-  | 
-  expr PLUS expr { 
-    $$ = ast_operation(PLUS, $1, $3); 
+  |
+  expr PLUS expr {
+    $$ = ast_operation(PLUS, $1, $3);
   }
   |
   expr MINUS expr {
@@ -118,10 +135,9 @@ expr:
   }
 
   ;
-  
+
 %%
 
 void yyerror(const char* err) {
   printf("Line %d: %s - '%s'\n", yyline, err, yytext  );
 }
-
