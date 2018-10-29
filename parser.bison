@@ -1,6 +1,7 @@
 // Tokens
 %token
   INT
+  FLOAT
   VAR
   PLUS
   MINUS
@@ -12,8 +13,8 @@
   LESSTHAN
   GREATERTHAN
   EQUALS
-  ATRIBFLOAT
-  ATRIBINT
+  T_FLOAT
+  T_INT
   T_MAIN
   T_FOR
   T_WHILE
@@ -31,14 +32,17 @@
   T_NOT
   T_INCREMENT
   T_DECREMENT
+  NAME
+  EQUALSIGN
 
 // Operator associativity & precedence
 //so pus aqui as tokens todas ainda nao tem as precedencias corretas
-%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLUMN T_AND T_OR T_NOT T_INCREMENT T_DECREMENT
-%left GREATER GREATERTHAN LESS LESSTHAN EQUALS
+%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLUMN T_AND T_OR T_NOT T_INCREMENT T_DECREMENT NAME
+%left GREATER GREATERTHAN LESS LESSTHAN EQUALS EQUALSIGN
 %left PLUS MINUS
 %left DIV MULT MOD
-%left ATRIBFLOAT ATRIBINT
+%left T_FLOAT T_INT
+%left INT FLOAT
 
 // Root-level grammar symbol
 %start program;
@@ -46,15 +50,19 @@
 // Types/values in association to grammar symbols.
 %union {
   int intValue;
+  float floatValue;
+  char* nameValue;
   Expr* exprValue;
   BoolExpr* boolValue;
-  Atrib* atribValue;
+  Attrib* attribValue;
 }
 
 %type <intValue> INT
 %type <exprValue> expr
 %type <boolValue> boolexpr
-%type <atribValue> atrib
+%type <attribValue> attrib
+%type <floatValue> FLOAT
+%type <nameValue> NAME
 
 
 // Use "%code requires" to make declarations go
@@ -70,6 +78,8 @@ extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
 BoolExpr* root;
+Attrib* root2;
+
 }
 
 %%
@@ -78,15 +88,15 @@ BoolExpr* root;
 program:
   boolexpr { root = $1; }
   |
-  atrib: { root = $1}
+  attrib { root2 = $1;}
 
-atrib:
-  ATRIBFLOAT NAME EQUALSIGN expr{
-    $$ =
+attrib:
+  T_FLOAT NAME EQUALSIGN expr{
+    $$ = ast_attrib_expr_float($2,$4);
   }
   |
-  ATRIBFLOAT NAME EQUALSIGN FLOAT {
-
+  T_INT NAME EQUALSIGN expr {
+    $$ = ast_attrib_expr_int($2, $4);
   }
 boolexpr:
   expr GREATERTHAN expr {

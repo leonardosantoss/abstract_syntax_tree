@@ -14,20 +14,12 @@ int yyline = 1;
 #.*\n { yyline++; }
 \n { yyline++;}
 
-([a-z]|[A-Z])([0-9]|[a-z]|[A-Z])+ {
-    yylval.nameValue = yytext;
-    return NAME;
-}
-
-\-?[0-9]+(\.[0-9]+)? {
-    yylval.floatValue = atof(yytext);
-    return FLOAT;
-}
 
 \-?[0-9]+ {
    yylval.intValue = atoi(yytext);
    return INT;
 }
+
 "+" { return PLUS; }
 "-" { return MINUS; }
 "/" { return DIV;}
@@ -38,8 +30,8 @@ int yyline = 1;
 ">=" { return GREATERTHAN; }
 "<=" { return LESSTHAN; }
 "==" { return EQUALS; }
-"int" { return ATRIBINT; }
-"float" { return ATRIBFLOAT; }
+"int" { return T_INT; }
+"float" { return T_FLOAT; }
 "=" { return EQUALSIGN; }
 "main" { return T_MAIN; }
 "for" { return T_FOR; }
@@ -58,5 +50,10 @@ int yyline = 1;
 "!" { return T_NOT; }
 "++" { return T_INCREMENT; }
 "--" { return T_DECREMENT; }
+
+([a-z]|[A-Z])([0-9]|[a-z]|[A-Z])* {
+    yylval.nameValue = yytext;
+    return NAME;
+}
 .  { yyerror("unexpected character"); }
 %%

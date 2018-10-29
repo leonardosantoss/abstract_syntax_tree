@@ -10,8 +10,10 @@ void print_aux(int nSpaces){
   }
 }
 
-void printVar(Expr* expr, int nSpaces){
-
+void printAttrib(Attrib* attrib, int nSpaces){
+  if(attrib->kind == E_ATTRIB){
+    printf("EIIIII ATTRIB PORRA!");
+  }
 }
 
 void printExpr(Expr* expr, int nSpaces){
@@ -20,9 +22,9 @@ void printExpr(Expr* expr, int nSpaces){
     print_aux(nSpaces);
     printf("%d\n", expr->attr.value);
   }
-  else if(expr->kind == E_VAR){
-    printVar(expr, nSpaces);
-  }
+  //else if(expr->kind == E_VAR){
+    //printVar(expr, nSpaces);
+  //}
   else if(expr->kind == E_OPERATION){
 
     print_aux(nSpaces);
@@ -100,7 +102,8 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
 
-     printBoolExpr(root, 0);
+     //printBoolExpr(root, 0);
+     printAttrib(root2, 0);
     
   }
   return 0;
