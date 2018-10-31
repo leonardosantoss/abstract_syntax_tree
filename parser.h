@@ -88,7 +88,7 @@ Attrib* root2;
     T_CLOSECURLYBRACKET = 281,
     T_OPENPARENTESES = 282,
     T_CLOSEPARENTESES = 283,
-    T_SEMICOLUMN = 284,
+    T_SEMICOLON = 284,
     T_AND = 285,
     T_OR = 286,
     T_NOT = 287,

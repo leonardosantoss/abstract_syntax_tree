@@ -452,7 +452,7 @@ static yyconst flex_int16_t yy_def[76] =
 static yyconst flex_int16_t yy_nxt[124] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
-       14,   15,   16,   17,   18,   19,   20,   21,   22,   22,
+       14,   15,   16,   17,   18,   19,   20,   21,    4,   22,
        22,   22,   23,   24,   22,   25,   22,   26,   22,   22,
        27,   22,   28,   22,   29,   30,   31,   32,   38,   45,
        39,   47,   46,   43,   72,   71,   48,   34,   34,   70,
@@ -922,7 +922,7 @@ YY_RULE_SETUP
 case 29:
 YY_RULE_SETUP
 #line 47 "scanner.flex"
-{ return T_SEMICOLUMN; }
+{ return T_SEMICOLON; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
@@ -953,7 +953,7 @@ case 35:
 YY_RULE_SETUP
 #line 54 "scanner.flex"
 {
-    yylval.nameValue = yytext;
+    yylval.nameValue = strdup(yytext);
     return NAME;
 }
 	YY_BREAK

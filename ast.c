@@ -28,21 +28,26 @@ BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right){
   return node;
 }
 
-Attrib* ast_attrib_expr_float(char* name, Expr* expr){
+Attrib* ast_attrib_expr_ct(char* name, Expr* expr){
   Attrib* node = (Attrib*) malloc(sizeof(Attrib));
-  node->kind = E_ATTRIB;
-  node->var->type = E_FLOAT;
-  node->var->name = name;
-  node->var->attr.value = expr;
+  node->kind = E_ATTRIBCT;
+  node->attr.attct.name = name;
+  node->attr.attct.value = expr;
   return node;
 }
 
-Attrib* ast_attrib_expr_int(char* name, Expr* expr){
+Attrib* ast_attrib_expr(char* name, Expr* expr){
   Attrib* node = (Attrib*) malloc(sizeof(Attrib));
   node->kind = E_ATTRIB;
-  node->var->type = E_INT;
-  node->var->name = name;
-  node->var->attr.value = expr;
+  node->attr.att.name = name;
+  node->attr.att.value = expr;
+  return node;
+}
+
+Attrib* ast_non_attrib(char* name){
+  Attrib* node = (Attrib*) malloc(sizeof(Attrib));
+  node->kind = E_NONATTRIB;
+  node->attr.name = name;
   return node;
 }
 

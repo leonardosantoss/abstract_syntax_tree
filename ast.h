@@ -5,25 +5,22 @@
 
 // AST for expressions
 
-struct _Var {
-  enum{
-    E_FLOAT,
-    E_INT
-  }type;
-  char* name;
-  union{
-    struct _Expr* value;
-  } attr;
-};
 
 struct _Attrib{
-  struct _Var* var;
   enum{
     E_ATTRIB,
+    E_ATTRIBCT,
     E_NONATTRIB
   }kind;
   union{
-    struct _Var* var;
+    struct{
+      struct _Expr* value;
+      char* name;
+    }att;
+    struct{
+      struct _Expr* value;
+      char* name;
+    }attct;
     char* name;
   }attr;
 };
@@ -36,7 +33,7 @@ struct _Expr {
   } kind;
   union {
     int value; // for integer values
-    struct _Var var;
+    char* var;
     struct { 
       int operator; // PLUS, MINUS, etc 
       struct _Expr* left;
@@ -62,7 +59,6 @@ struct _BoolExpr {
 
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
-typedef struct _Var Var;
 typedef struct _Attrib Attrib;
 
 
@@ -74,8 +70,9 @@ Expr* ast_integer(int v);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 BoolExpr* ast_boolean(Expr *expr);
 BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right);
-Attrib* ast_attrib_expr_float(char* name, Expr* expr );
-Attrib* ast_attrib_expr_int(char* name, Expr* expr );
+Attrib* ast_attrib_expr_ct(char* name, Expr* expr );
+Attrib* ast_attrib_expr(char* name, Expr* expr );
+Attrib* ast_non_attrib(char* name);
 
 
 #endif

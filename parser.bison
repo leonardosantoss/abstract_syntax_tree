@@ -26,7 +26,7 @@
   T_CLOSECURLYBRACKET
   T_OPENPARENTESES
   T_CLOSEPARENTESES
-  T_SEMICOLUMN
+  T_SEMICOLON
   T_AND
   T_OR
   T_NOT
@@ -37,7 +37,7 @@
 
 // Operator associativity & precedence
 //so pus aqui as tokens todas ainda nao tem as precedencias corretas
-%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLUMN T_AND T_OR T_NOT T_INCREMENT T_DECREMENT NAME
+%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLON T_AND T_OR T_NOT T_INCREMENT T_DECREMENT NAME
 %left GREATER GREATERTHAN LESS LESSTHAN EQUALS EQUALSIGN
 %left PLUS MINUS
 %left DIV MULT MOD
@@ -86,17 +86,24 @@ Attrib* root2;
 
 
 program:
+  T_INT T_MAIN T_OPENPARENTESES T_CLOSEPARENTESES T_OPENCURLYBRACKET body T_CLOSECURLYBRACKET
+  
+body:
   boolexpr { root = $1; }
   |
-  attrib { root2 = $1;}
-
+  attrib { root2 = $1; }
+  
 attrib:
-  T_FLOAT NAME EQUALSIGN expr{
-    $$ = ast_attrib_expr_float($2,$4);
+  T_INT NAME EQUALSIGN expr T_SEMICOLON{
+    $$ = ast_attrib_expr_ct($2, $4);
   }
   |
-  T_INT NAME EQUALSIGN expr {
-    $$ = ast_attrib_expr_int($2, $4);
+  NAME EQUALSIGN expr T_SEMICOLON{
+    $$ = ast_attrib_expr($1, $3);
+  }
+  |
+  T_INT NAME T_SEMICOLON{
+      $$ = ast_non_attrib($2);
   }
 boolexpr:
   expr GREATERTHAN expr {

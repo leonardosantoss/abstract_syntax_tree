@@ -44,15 +44,15 @@ int yyline = 1;
 "}" { return T_CLOSECURLYBRACKET; }
 "(" { return T_OPENPARENTESES; }
 ")" { return T_CLOSEPARENTESES; }
-";" { return T_SEMICOLUMN; }
+";" { return T_SEMICOLON; }
 "&&" { return T_AND; }
 "||" { return T_OR; }
 "!" { return T_NOT; }
 "++" { return T_INCREMENT; }
 "--" { return T_DECREMENT; }
 
-([a-z]|[A-Z])([0-9]|[a-z]|[A-Z])* {
-    yylval.nameValue = yytext;
+[a-z][a-zA-Z0-9]* {
+    yylval.nameValue = strdup(yytext);
     return NAME;
 }
 .  { yyerror("unexpected character"); }
