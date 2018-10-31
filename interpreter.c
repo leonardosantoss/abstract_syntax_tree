@@ -10,19 +10,15 @@ void print_aux(int nSpaces){
   }
 }
 
-void printVar(Expr* expr, int nSpaces){
-
-}
-
 void printExpr(Expr* expr, int nSpaces){
 
   if(expr->kind == E_INTEGER){
     print_aux(nSpaces);
     printf("%d\n", expr->attr.value);
   }
-  else if(expr->kind == E_VAR){
-    printVar(expr, nSpaces);
-  }
+  //else if(expr->kind == E_VAR){
+    //printVar(expr, nSpaces);
+  //}
   else if(expr->kind == E_OPERATION){
 
     print_aux(nSpaces);
@@ -51,6 +47,31 @@ void printExpr(Expr* expr, int nSpaces){
   
 }
 
+void printVar(Expr* value, char* name, int nSpaces){
+  print_aux(nSpaces);
+  printf("%s\n", name);
+  print_aux(nSpaces);
+  printf("=\n");
+  printExpr(value, nSpaces);
+}
+
+void printAttrib(Attrib* attrib, int nSpaces){
+  if(attrib->kind == E_ATTRIBCT){
+    print_aux(nSpaces);
+    printf("int\n");
+    printVar(attrib->attr.attct.value, attrib->attr.attct.name, nSpaces+2);
+  }
+  else if(attrib->kind == E_ATTRIB)
+  {
+     printVar(attrib->attr.att.value, attrib->attr.att.name, nSpaces);
+  }
+  else if(attrib->kind == E_NONATTRIB){
+    print_aux(nSpaces);
+    printf("int\n");
+    print_aux(nSpaces+2);
+    printf("%s\n", attrib->attr.name);
+  }
+}
 
 void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
 
@@ -100,7 +121,8 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
 
-     printBoolExpr(root, 0);
+     //printBoolExpr(root, 0);
+     printAttrib(root2, 0);
     
   }
   return 0;
