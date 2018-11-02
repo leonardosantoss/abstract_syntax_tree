@@ -55,14 +55,18 @@
   Expr* exprValue;
   BoolExpr* boolValue;
   Attrib* attribValue;
+  While* whileValue;
+
 }
 
 %type <intValue> INT
 %type <exprValue> expr
 %type <boolValue> boolexpr
 %type <attribValue> attrib
+%type <whileValue> while
 %type <floatValue> FLOAT
 %type <nameValue> NAME
+%type <cmdListValue> cmdlist
 
 
 // Use "%code requires" to make declarations go
@@ -79,6 +83,7 @@ extern FILE* yyin;
 extern void yyerror(const char* msg);
 BoolExpr* root;
 Attrib* root2;
+While* root3;
 
 }
 
@@ -86,13 +91,23 @@ Attrib* root2;
 
 
 program:
-  T_INT T_MAIN T_OPENPARENTESES T_CLOSEPARENTESES T_OPENCURLYBRACKET body T_CLOSECURLYBRACKET
+  T_INT T_MAIN T_OPENPARENTESES T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdlist T_CLOSECURLYBRACKET
   
-body:
+cmdlist:
   boolexpr { root = $1; }
   |
   attrib { root2 = $1; }
-  
+  |
+  while { root3 = $1; }
+
+while:
+  T_WHILE T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET attrib T_CLOSECURLYBRACKET{
+    $$ = ast_cmd_while_boolexpr($3, $6);
+  }
+  |
+  T_WHILE T_OPENPARENTESES expr T_CLOSEPARENTESES T_OPENCURLYBRACKET attrib T_CLOSECURLYBRACKET{
+    $$ = ast_cmd_while_expr($3, $6);
+  }
 attrib:
   T_INT NAME EQUALSIGN expr T_SEMICOLON{
     $$ = ast_attrib_expr_ct($2, $4);
@@ -125,7 +140,6 @@ boolexpr:
    expr EQUALS expr {
     $$ = ast_boolean_expr(EQUALS, $1, $3);
   }
-
 expr:
   INT {
     $$ = ast_integer($1);

@@ -73,6 +73,7 @@ void printAttrib(Attrib* attrib, int nSpaces){
   }
 }
 
+
 void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
 
   if(boolExpr->kind == E_BOOL){
@@ -98,17 +99,26 @@ void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
         break;  
 
     }
-
     printExpr(boolExpr->attr.op.left, nSpaces+2);
     printExpr(boolExpr->attr.op.right, nSpaces+2);
-
-
-
   }
 
 }
 
-
+void printWhile(While* cmdWhile, int nSpaces){
+    if(cmdWhile->kind == E_WHILE_BOOLEXPR){
+      print_aux(nSpaces);
+      printf("while\n");
+      printBoolExpr(cmdWhile->type.valueBoolExpr, nSpaces+2);
+      printAttrib(cmdWhile->test ,nSpaces+2);
+    }
+    else if(cmdWhile->kind == E_WHILE_EXPR){
+      print_aux(nSpaces);
+      printf("while\n");
+      printExpr(cmdWhile->type.valueExpr, nSpaces+2);
+      printAttrib(cmdWhile->test ,nSpaces+4);
+    }
+}
 
 int main(int argc, char** argv) {
   --argc; ++argv;
@@ -122,7 +132,8 @@ int main(int argc, char** argv) {
   if (yyparse() == 0) {
 
      //printBoolExpr(root, 0);
-     printAttrib(root2, 0);
+     //printAttrib(root2, 0);
+     printWhile(root3, 0);
     
   }
   return 0;

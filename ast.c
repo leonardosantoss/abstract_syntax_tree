@@ -60,3 +60,20 @@ Expr* ast_operation
   node->attr.op.right = right;
   return node;
 }
+
+While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, Attrib* attrib){
+  While* node = (While*) malloc(sizeof(While));
+  node->kind = E_WHILE_BOOLEXPR;
+  node->type.valueBoolExpr = boolexpr;
+  node->test = attrib;
+  return node;
+}
+
+
+While* ast_cmd_while_expr(Expr* expr, Attrib* attrib){
+  While* node = (While*) malloc(sizeof(While));
+  node->kind = E_WHILE_EXPR;
+  node->type.valueExpr = expr;
+  node->test = attrib;
+  return node;
+}

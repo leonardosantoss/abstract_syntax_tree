@@ -57,9 +57,23 @@ struct _BoolExpr {
   }attr;
 };
 
+struct _While {
+  enum{
+    E_WHILE_EXPR,
+    E_WHILE_BOOLEXPR
+  }kind;
+  union{
+    struct _BoolExpr* valueBoolExpr;
+    struct _Expr *valueExpr;
+  }type;
+  struct _Attrib *test;
+};
+
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
 typedef struct _Attrib Attrib;
+typedef struct _While While;
+
 
 
 
@@ -73,6 +87,8 @@ BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right);
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr );
 Attrib* ast_attrib_expr(char* name, Expr* expr );
 Attrib* ast_non_attrib(char* name);
+While* ast_cmd_while_expr(Expr* expr, Attrib* attrib);
+While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, Attrib* attrib);
 
 
 #endif
