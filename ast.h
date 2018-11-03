@@ -69,12 +69,30 @@ struct _While {
   struct _Attrib *test;
 };
 
+struct _Cmd
+{
+  enum{
+    E_ATTRIB,
+    E_WHILE
+  }kind;
+  union{
+    struct _Attrib *Attrib;
+    struct _While *While;
+  }type;
+};
+
+struct _CmdList
+{
+  struct _Cmd *Cmd;
+  struct _CmdList *next;
+};
+
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
 typedef struct _Attrib Attrib;
 typedef struct _While While;
-
-
+typedef struct _Cmd Cmd;
+typedef struct _CmdList CmdList;
 
 
 
@@ -87,8 +105,9 @@ BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right);
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr );
 Attrib* ast_attrib_expr(char* name, Expr* expr );
 Attrib* ast_non_attrib(char* name);
-While* ast_cmd_while_expr(Expr* expr, Attrib* attrib);
+While* ast_cmd_while_expr(Expr* expr, Attrib* attrib);  //Shouldn´t be attrib, needs to be a cmdlist
 While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, Attrib* attrib);
-
-
+CmdList* ast_cmdList(Cmd* cmd, CmdList* cmdList);
+Cmd* ast_cmd_attrib(Attrib* attrib);
+Cmd* ast_cmd_while(While* whileExpr);
 #endif

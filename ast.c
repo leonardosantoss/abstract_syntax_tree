@@ -77,3 +77,27 @@ While* ast_cmd_while_expr(Expr* expr, Attrib* attrib){
   node->test = attrib;
   return node;
 }
+
+Cmd* ast_cmd_while(While* whileExpr)
+{
+  Cmd* node = (Cmd*) malloc(sizeof(Cmd));
+  node->kind = E_WHILE;
+  node->type.While = whileExpr;
+  return node;
+}
+
+Cmd* ast_cmd_attrib(Attrib* attrib)
+{
+  Cmd* node = (Cmd*) malloc(sizeof(Cmd));
+  node->kind = E_ATTRIB;
+  node->type.Attrib = attrib;
+  return node;
+}
+
+CmdList* ast_cmdList(Cmd* cmd, CmdList* next)
+{
+  CmdList* list = (CmdList*) malloc(sizeof(CmdList));
+  list->Cmd = cmd;
+  list->next = next;
+  return list;
+}

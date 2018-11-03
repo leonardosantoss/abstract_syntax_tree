@@ -56,7 +56,8 @@
   BoolExpr* boolValue;
   Attrib* attribValue;
   While* whileValue;
-
+  CmdList* cmdListValue;
+  Cmd* cmdValue;
 }
 
 %type <intValue> INT
@@ -66,7 +67,8 @@
 %type <whileValue> while
 %type <floatValue> FLOAT
 %type <nameValue> NAME
-%type <cmdListValue> cmdlist
+%type <cmdListValue> cmdList
+%type <cmdValue> cmd
 
 
 // Use "%code requires" to make declarations go
@@ -81,8 +83,9 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-BoolExpr* root;
-Attrib* root2;
+CmdList* root;
+BoolExpr* root1;
+Attrib* root2;  
 While* root3;
 
 }
@@ -91,14 +94,23 @@ While* root3;
 
 
 program:
-  T_INT T_MAIN T_OPENPARENTESES T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdlist T_CLOSECURLYBRACKET
+  T_INT T_MAIN T_OPENPARENTESES T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET
+  { root = $6; }
+
+cmdList:
+  cmd cmdList{
+    $$ = ast_cmdList($1, $2);
+  }
+  |
+  cmd
+  {
+    $$ = ast_cmdList($1, NULL);
+  }
   
-cmdlist:
-  boolexpr { root = $1; }
+cmd:
+  attrib { $$ = ast_cmd_attrib($1); }
   |
-  attrib { root2 = $1; }
-  |
-  while { root3 = $1; }
+  while { $$ = ast_cmd_while($1); }
 
 while:
   T_WHILE T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET attrib T_CLOSECURLYBRACKET{
@@ -120,6 +132,8 @@ attrib:
   T_INT NAME T_SEMICOLON{
       $$ = ast_non_attrib($2);
   }
+;
+
 boolexpr:
   expr GREATERTHAN expr {
     $$ = ast_boolean_expr(GREATERTHAN, $1, $3);

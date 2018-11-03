@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 74 "parser.bison" /* yacc.c:1919  */
+#line 76 "parser.bison" /* yacc.c:1919  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,12 +51,13 @@ extern int yyline;
 extern char* yytext;
 extern FILE* yyin;
 extern void yyerror(const char* msg);
-BoolExpr* root;
-Attrib* root2;
+CmdList* root;
+BoolExpr* root1;
+Attrib* root2;  
 While* root3;
 
 
-#line 60 "parser.h" /* yacc.c:1919  */
+#line 61 "parser.h" /* yacc.c:1919  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -114,9 +115,10 @@ union YYSTYPE
   BoolExpr* boolValue;
   Attrib* attribValue;
   While* whileValue;
+  CmdList* cmdListValue;
+  Cmd* cmdValue;
 
-
-#line 120 "parser.h" /* yacc.c:1919  */
+#line 122 "parser.h" /* yacc.c:1919  */
 };
 
 typedef union YYSTYPE YYSTYPE;

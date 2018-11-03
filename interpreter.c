@@ -120,6 +120,20 @@ void printWhile(While* cmdWhile, int nSpaces){
     }
 }
 
+void printCmd(Cmd* cmd, int nSpaces)
+{
+  if(cmd->kind == E_ATTRIB)
+  {
+    print_aux(nSpaces);
+    printAttrib(cmd->type.Attrib, nSpaces+2);
+  }
+  else if(cmd->kind == E_WHILE)
+  {
+    print_aux(nSpaces);
+    printWhile(cmd->type.While, nSpaces+2);
+  }
+}
+
 int main(int argc, char** argv) {
   --argc; ++argv;
   if (argc != 0) {
@@ -131,10 +145,19 @@ int main(int argc, char** argv) {
   } //  yyin = stdin
   if (yyparse() == 0) {
 
-     //printBoolExpr(root, 0);
-     //printAttrib(root2, 0);
-     printWhile(root3, 0);
+    //printBoolExpr(root, 0);
+    //printAttrib(root2, 0);
+    //printWhile(root3, 0);
     
+
+    printCmd(root->Cmd, 0);
+     
+    while(root->next != NULL)
+    {
+      root = root->next;
+      printCmd(root->Cmd, 0);      
+    }
+
   }
   return 0;
 
