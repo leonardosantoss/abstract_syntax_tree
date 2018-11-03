@@ -60,3 +60,44 @@ Expr* ast_operation
   node->attr.op.right = right;
   return node;
 }
+
+While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, Attrib* attrib){
+  While* node = (While*) malloc(sizeof(While));
+  node->kind = E_WHILE_BOOLEXPR;
+  node->type.valueBoolExpr = boolexpr;
+  node->test = attrib;
+  return node;
+}
+
+
+While* ast_cmd_while_expr(Expr* expr, Attrib* attrib){
+  While* node = (While*) malloc(sizeof(While));
+  node->kind = E_WHILE_EXPR;
+  node->type.valueExpr = expr;
+  node->test = attrib;
+  return node;
+}
+
+Cmd* ast_cmd_while(While* whileExpr)
+{
+  Cmd* node = (Cmd*) malloc(sizeof(Cmd));
+  node->kind = E_WHILE;
+  node->type.While = whileExpr;
+  return node;
+}
+
+Cmd* ast_cmd_attrib(Attrib* attrib)
+{
+  Cmd* node = (Cmd*) malloc(sizeof(Cmd));
+  node->kind = E_ATTRIB;
+  node->type.Attrib = attrib;
+  return node;
+}
+
+CmdList* ast_cmdList(Cmd* cmd, CmdList* next)
+{
+  CmdList* list = (CmdList*) malloc(sizeof(CmdList));
+  list->Cmd = cmd;
+  list->next = next;
+  return list;
+}
