@@ -139,7 +139,7 @@ void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
 void printBoolExprList(BoolExprList* root, int nSpaces)
 {
   if(root->kind == E_EXPR){
-    printExpr(root->list.type.expr, nSpaces);
+    printExpr(root->list.type.expr, nSpaces+2);
   }
   else if(root->kind == E_BOOLEXPR){
     printBoolExpr(root->list.type.value, nSpaces);
