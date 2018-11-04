@@ -27,17 +27,20 @@
   T_OPENPARENTESES
   T_CLOSEPARENTESES
   T_SEMICOLON
+  T_COMMA
   T_AND
   T_OR
   T_NOT
   T_INCREMENT
   T_DECREMENT
   NAME
+  NAME2
   EQUALSIGN
+  STRING
 
 // Operator associativity & precedence
 //so pus aqui as tokens todas ainda nao tem as precedencias corretas
-%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLON T_AND T_OR T_NOT T_INCREMENT T_DECREMENT NAME
+%left T_MAIN T_FOR T_WHILE T_SCANF T_PRINTF T_IF T_ELSE T_OPENCURLYBRACKET T_CLOSECURLYBRACKET T_OPENPARENTESES T_CLOSEPARENTESES T_SEMICOLON T_COMMA T_AND T_OR T_NOT T_INCREMENT T_DECREMENT NAME NAME2 STRING
 %left GREATER GREATERTHAN LESS LESSTHAN EQUALS EQUALSIGN
 %left PLUS MINUS
 %left DIV MULT MOD
@@ -52,12 +55,19 @@
   int intValue;
   float floatValue;
   char* nameValue;
+  char* name2Value;
   Expr* exprValue;
   BoolExpr* boolValue;
   Attrib* attribValue;
   While* whileValue;
   CmdList* cmdListValue;
   Cmd* cmdValue;
+  Printf* printfValue;
+  Scanf* scanfValue;
+  CharList* varlistValue;
+  CharList* varlist2Value;
+  char* stringValue;
+
 }
 
 %type <intValue> INT
@@ -67,8 +77,14 @@
 %type <whileValue> while
 %type <floatValue> FLOAT
 %type <nameValue> NAME
+%type <name2Value> NAME2
 %type <cmdListValue> cmdList
 %type <cmdValue> cmd
+%type <stringValue> STRING
+%type <printfValue> printf
+%type <scanfValue> scanf
+%type <varlistValue> varlist
+%type <varlist2Value> varlist2
 
 
 // Use "%code requires" to make declarations go
@@ -96,6 +112,7 @@ While* root3;
 program:
   T_INT T_MAIN T_OPENPARENTESES T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET
   { root = $6; }
+;
 
 cmdList:
   cmd cmdList{
@@ -106,20 +123,56 @@ cmdList:
   {
     $$ = ast_cmdList($1, NULL);
   }
+;
   
 cmd:
   attrib { $$ = ast_cmd_attrib($1); }
   |
   while { $$ = ast_cmd_while($1); }
+  |
+  printf { $$ = ast_cmd_printf($1); }
+  |
+  scanf { $$ = ast_cmd_scanf($1); }
+;
+
+printf:
+  T_PRINTF T_OPENPARENTESES STRING varlist T_CLOSEPARENTESES T_SEMICOLON
+    { $$ = ast_cmd_printf_expr($3, $4); }
+  |
+  T_PRINTF T_OPENPARENTESES STRING T_CLOSEPARENTESES T_SEMICOLON
+    { $$ = ast_cmd_printf_expr($3, NULL); }
+;
+
+scanf:
+  T_SCANF T_OPENPARENTESES STRING varlist2 T_CLOSEPARENTESES T_SEMICOLON
+    { $$ = ast_cmd_scanf_expr($3, $4); }
+  |
+  T_SCANF T_OPENPARENTESES STRING T_CLOSEPARENTESES T_SEMICOLON
+    { $$ = ast_cmd_scanf_expr($3, NULL); }  
+;
+
+varlist:
+  T_COMMA NAME varlist { $$ = ast_cmd_charList($2, $3); }
+  |
+  T_COMMA NAME { $$ = ast_cmd_charList($2, NULL); }
+;
+
+varlist2:
+  T_COMMA NAME2 varlist2 { $$ = ast_cmd_charList($2, $3); }
+  |
+  T_COMMA NAME2 { $$ = ast_cmd_charList($2, NULL); }
+;
 
 while:
-  T_WHILE T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET attrib T_CLOSECURLYBRACKET{
+  T_WHILE T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
     $$ = ast_cmd_while_boolexpr($3, $6);
   }
   |
-  T_WHILE T_OPENPARENTESES expr T_CLOSEPARENTESES T_OPENCURLYBRACKET attrib T_CLOSECURLYBRACKET{
+  T_WHILE T_OPENPARENTESES expr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
     $$ = ast_cmd_while_expr($3, $6);
   }
+;
+
 attrib:
   T_INT NAME EQUALSIGN expr T_SEMICOLON{
     $$ = ast_attrib_expr_ct($2, $4);
@@ -157,6 +210,10 @@ boolexpr:
 expr:
   INT {
     $$ = ast_integer($1);
+  }
+  |
+  NAME {
+    $$ = ast_expr_var($1);
   }
   |
   expr PLUS expr {

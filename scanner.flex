@@ -45,6 +45,7 @@ int yyline = 1;
 "(" { return T_OPENPARENTESES; }
 ")" { return T_CLOSEPARENTESES; }
 ";" { return T_SEMICOLON; }
+"," { return T_COMMA; }
 "&&" { return T_AND; }
 "||" { return T_OR; }
 "!" { return T_NOT; }
@@ -54,6 +55,16 @@ int yyline = 1;
 [a-z][a-zA-Z0-9]* {
     yylval.nameValue = strdup(yytext);
     return NAME;
+}
+
+\&[a-z][a-zA-Z0-9]* {
+    yylval.name2Value = strdup(yytext);
+    return NAME2;
+}
+
+\"[^\"]*\" {
+    yylval.stringValue = strdup(yytext);
+    return STRING;
 }
 .  { yyerror("unexpected character"); }
 %%

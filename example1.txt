@@ -1,9 +1,9 @@
 int main()
 {
-    while(1+2 > 2+3){
-        int x;
-    }
-    while(1+2 > 2+3){
-        int x;
-    }
+   
+   int a;
+   while(1){
+       int x;
+       scanf("", &a);
+   }
 }
