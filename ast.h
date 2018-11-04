@@ -66,18 +66,37 @@ struct _While {
     struct _BoolExpr* valueBoolExpr;
     struct _Expr *valueExpr;
   }type;
-  struct _Attrib *test;
+  struct _CmdList *test;
+};
+
+struct _CharList {
+  char* value;
+  struct _CharList* next;
+};
+
+struct _Printf {
+  char *value;
+  struct _CharList* varList;
+};
+
+struct _Scanf {
+  char* value;
+  struct _CharList* varList;
 };
 
 struct _Cmd
 {
   enum{
     E_ATTRIB,
-    E_WHILE
+    E_WHILE,
+    E_PRINTF,
+    E_SCANF
   }kind;
   union{
     struct _Attrib *Attrib;
     struct _While *While;
+    struct _Printf *Printf;
+    struct _Scanf *Scanf;
   }type;
 };
 
@@ -87,27 +106,39 @@ struct _CmdList
   struct _CmdList *next;
 };
 
+
+
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
 typedef struct _Attrib Attrib;
 typedef struct _While While;
+typedef struct _CharList CharList;
+typedef struct _Printf Printf;
 typedef struct _Cmd Cmd;
 typedef struct _CmdList CmdList;
+typedef struct _Scanf Scanf;
 
 
 
 // Constructor functions (see implementation in ast.c)
 
 Expr* ast_integer(int v);
+Expr* ast_expr_var(char *name);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 BoolExpr* ast_boolean(Expr *expr);
 BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right);
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr );
 Attrib* ast_attrib_expr(char* name, Expr* expr );
 Attrib* ast_non_attrib(char* name);
-While* ast_cmd_while_expr(Expr* expr, Attrib* attrib);  //Shouldn´t be attrib, needs to be a cmdlist
-While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, Attrib* attrib);
+While* ast_cmd_while_expr(Expr* expr, CmdList* cmdlist);  //Shouldn´t be attrib, needs to be a cmdlist
+While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist);
 CmdList* ast_cmdList(Cmd* cmd, CmdList* cmdList);
 Cmd* ast_cmd_attrib(Attrib* attrib);
 Cmd* ast_cmd_while(While* whileExpr);
+Cmd* ast_cmd_printf(Printf* printfExpr);
+Cmd* ast_cmd_scanf(Scanf* scanfExpr);
+Printf* ast_cmd_printf_expr(char* value, CharList* charList);
+Scanf* ast_cmd_scanf_expr(char* value, CharList* charList);
+CharList* ast_cmd_charList(char* name, CharList* next);
+
 #endif

@@ -1,12 +1,31 @@
 #include <stdio.h>
 #include "parser.h"
 
-
+void printCmdList(CmdList* root, int nSpaces);
 
 void print_aux(int nSpaces){
   int i;
   for(i=0;i<nSpaces;i++){
     printf("  ");
+  }
+}
+
+void printCharList(CharList* varlist, int nSpaces){
+  print_aux(nSpaces);
+  printf(" %s\n", varlist->value);
+
+  if(varlist->next != NULL){
+    printCharList(varlist->next, nSpaces);
+  }
+}
+
+void printPrintf(Printf* Printf, int nSpaces){
+  print_aux(nSpaces);
+  printf("printf\n");
+  print_aux(nSpaces+2);
+  printf("%s\n",  Printf->value);
+  if(Printf->varList != NULL){
+    printCharList(Printf->varList, nSpaces+2);
   }
 }
 
@@ -16,9 +35,11 @@ void printExpr(Expr* expr, int nSpaces){
     print_aux(nSpaces);
     printf("%d\n", expr->attr.value);
   }
-  //else if(expr->kind == E_VAR){
-    //printVar(expr, nSpaces);
-  //}
+  else if(expr->kind == E_VAR){
+    print_aux(nSpaces);
+    printf("%s\n", expr->attr.var);
+
+  }
   else if(expr->kind == E_OPERATION){
 
     print_aux(nSpaces);
@@ -50,9 +71,9 @@ void printExpr(Expr* expr, int nSpaces){
 void printVar(Expr* value, char* name, int nSpaces){
   print_aux(nSpaces);
   printf("%s\n", name);
-  print_aux(nSpaces);
+  print_aux(nSpaces+2);
   printf("=\n");
-  printExpr(value, nSpaces);
+  printExpr(value, nSpaces+2);
 }
 
 void printAttrib(Attrib* attrib, int nSpaces){
@@ -110,13 +131,13 @@ void printWhile(While* cmdWhile, int nSpaces){
       print_aux(nSpaces);
       printf("while\n");
       printBoolExpr(cmdWhile->type.valueBoolExpr, nSpaces+2);
-      printAttrib(cmdWhile->test ,nSpaces+2);
+      printCmdList(cmdWhile->test ,nSpaces+2);
     }
     else if(cmdWhile->kind == E_WHILE_EXPR){
       print_aux(nSpaces);
       printf("while\n");
       printExpr(cmdWhile->type.valueExpr, nSpaces+2);
-      printAttrib(cmdWhile->test ,nSpaces+4);
+      printCmdList(cmdWhile->test ,nSpaces+4);
     }
 }
 
@@ -132,6 +153,21 @@ void printCmd(Cmd* cmd, int nSpaces)
     print_aux(nSpaces);
     printWhile(cmd->type.While, nSpaces+2);
   }
+  else if(cmd->kind == E_PRINTF)
+  {
+    print_aux(nSpaces);
+    printPrintf(cmd->type.Printf, nSpaces+2);
+  }
+}
+
+void printCmdList(CmdList* root, int nSpaces){
+    printCmd(root->Cmd, nSpaces);
+     
+    while(root->next != NULL)
+    {
+      root = root->next;
+      printCmd(root->Cmd, nSpaces);      
+    }
 }
 
 int main(int argc, char** argv) {
@@ -149,7 +185,7 @@ int main(int argc, char** argv) {
     //printAttrib(root2, 0);
     //printWhile(root3, 0);
     
-
+    printf("int main()\n");
     printCmd(root->Cmd, 0);
      
     while(root->next != NULL)

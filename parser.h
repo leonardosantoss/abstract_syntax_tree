@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 76 "parser.bison" /* yacc.c:1919  */
+#line 92 "parser.bison" /* yacc.c:1919  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,13 +91,16 @@ While* root3;
     T_OPENPARENTESES = 282,
     T_CLOSEPARENTESES = 283,
     T_SEMICOLON = 284,
-    T_AND = 285,
-    T_OR = 286,
-    T_NOT = 287,
-    T_INCREMENT = 288,
-    T_DECREMENT = 289,
-    NAME = 290,
-    EQUALSIGN = 291
+    T_COMMA = 285,
+    T_AND = 286,
+    T_OR = 287,
+    T_NOT = 288,
+    T_INCREMENT = 289,
+    T_DECREMENT = 290,
+    NAME = 291,
+    NAME2 = 292,
+    EQUALSIGN = 293,
+    STRING = 294
   };
 #endif
 
@@ -106,19 +109,26 @@ While* root3;
 
 union YYSTYPE
 {
-#line 51 "parser.bison" /* yacc.c:1919  */
+#line 54 "parser.bison" /* yacc.c:1919  */
 
   int intValue;
   float floatValue;
   char* nameValue;
+  char* name2Value;
   Expr* exprValue;
   BoolExpr* boolValue;
   Attrib* attribValue;
   While* whileValue;
   CmdList* cmdListValue;
   Cmd* cmdValue;
+  Printf* printfValue;
+  Scanf* scanfValue;
+  CharList* varlistValue;
+  CharList* varlist2Value;
+  char* stringValue;
 
-#line 122 "parser.h" /* yacc.c:1919  */
+
+#line 132 "parser.h" /* yacc.c:1919  */
 };
 
 typedef union YYSTYPE YYSTYPE;
