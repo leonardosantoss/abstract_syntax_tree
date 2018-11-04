@@ -45,6 +45,33 @@ BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right){
   return node;
 }
 
+BoolExprList* ast_boolean_exprList_and(BoolExpr* value, BoolExprList* next)
+{
+  BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
+  list->kind = E_AND;
+  list->list.value = value;
+  list->list.next = next;
+  return list;
+}
+
+BoolExprList* ast_boolean_exprList_or(BoolExpr* value, BoolExprList* next)
+{
+  BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
+  list->kind = E_OR;
+  list->list.value = value;
+  list->list.next = next;
+  return list;
+}
+
+BoolExprList* ast_boolean_exprList_solo(BoolExpr* value, BoolExprList* next)
+{
+  BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
+  list->kind = E_BOOLEXPR;
+  list->list.value = value;
+  list->list.next = next;
+  return list;
+}
+
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr){
   Attrib* node = (Attrib*) malloc(sizeof(Attrib));
   node->kind = E_ATTRIBCT;
@@ -70,10 +97,10 @@ Attrib* ast_non_attrib(char* name){
 
 
 
-While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist){
+While* ast_cmd_while_boolexpr(BoolExprList* boolexprlist, CmdList* cmdlist){
   While* node = (While*) malloc(sizeof(While));
   node->kind = E_WHILE_BOOLEXPR;
-  node->type.valueBoolExpr = boolexpr;
+  node->type.valueBoolExpr = boolexprlist;
   node->test = cmdlist;
   return node;
 }
@@ -87,10 +114,10 @@ While* ast_cmd_while_expr(Expr* expr, CmdList* cmdlist){
 }
 
 
-If* ast_cmd_if_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist){
+If* ast_cmd_if_boolexpr(BoolExprList* boolexprlist, CmdList* cmdlist){
   If* node = (If*) malloc(sizeof(If));
   node->kind = E_IF_BOOLEXPR;
-  node->type.valueBoolExpr = boolexpr;
+  node->type.valueBoolExpr = boolexprlist;
   node->test = cmdlist;
   return node;
 }
@@ -104,10 +131,10 @@ If* ast_cmd_if_expr(Expr* expr, CmdList* cmdlist){
   return node;
 }
 
-If* ast_cmd_ifelse_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist, Else* elseexpr){
+If* ast_cmd_ifelse_boolexpr(BoolExprList* boolexprlist, CmdList* cmdlist, Else* elseexpr){
   If* node = (If*) malloc(sizeof(If));
   node->kind = E_IFELSE_BOOLEXPR;
-  node->type.valueBoolExpr = boolexpr;
+  node->type.valueBoolExpr = boolexprlist;
   node->test = cmdlist;
   node->withElse.valueElse = elseexpr;
   return node;

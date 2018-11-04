@@ -136,11 +136,31 @@ void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
 
 }
 
+void printBoolExprList(BoolExprList* root, int nSpaces)
+{
+  printBoolExpr(root->list.value, nSpaces);
+  if(root->kind == E_AND)
+  {
+    print_aux(nSpaces);
+    printf("&&\n");
+  }
+  else if(root->kind == E_OR)
+  {
+    print_aux(nSpaces);
+    printf("||\n");
+  }
+  while(root->list.next != NULL)
+  {
+    root = root->list.next;
+    printBoolExpr(root->list.value, nSpaces);
+  }
+}
+
 void printWhile(While* cmdWhile, int nSpaces){
     if(cmdWhile->kind == E_WHILE_BOOLEXPR){
       print_aux(nSpaces);
       printf("while\n");
-      printBoolExpr(cmdWhile->type.valueBoolExpr, nSpaces+2);
+      printBoolExprList(cmdWhile->type.valueBoolExpr, nSpaces+2);
       printCmdList(cmdWhile->test ,nSpaces+2);
     }
     else if(cmdWhile->kind == E_WHILE_EXPR){
@@ -162,7 +182,7 @@ void printIf(If* cmdIf, int nSpaces){
   if(cmdIf->kind == E_IF_BOOLEXPR){
       print_aux(nSpaces);
       printf("if\n");
-      printBoolExpr(cmdIf->type.valueBoolExpr, nSpaces+2);
+      printBoolExprList(cmdIf->type.valueBoolExpr, nSpaces+2);
       printCmdList(cmdIf->test ,nSpaces+4);
     }
   else if(cmdIf->kind == E_IF_EXPR){
@@ -174,7 +194,7 @@ void printIf(If* cmdIf, int nSpaces){
   else if(cmdIf->kind == E_IFELSE_BOOLEXPR){
     print_aux(nSpaces);
     printf("if\n");
-    printBoolExpr(cmdIf->type.valueBoolExpr, nSpaces+2);
+    printBoolExprList(cmdIf->type.valueBoolExpr, nSpaces+2);
     printCmdList(cmdIf->test ,nSpaces+4);
     printElse(cmdIf->withElse.valueElse ,nSpaces);
   }

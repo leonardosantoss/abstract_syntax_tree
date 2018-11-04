@@ -58,6 +58,7 @@
   char* name2Value;
   Expr* exprValue;
   BoolExpr* boolValue;
+  BoolExprList* boolexprlistValue;
   Attrib* attribValue;
   While* whileValue;
   CmdList* cmdListValue;
@@ -69,12 +70,12 @@
   char* stringValue;
   If* ifValue;
   Else* elseValue;
-
 }
 
 %type <intValue> INT
 %type <exprValue> expr
 %type <boolValue> boolexpr
+%type <boolexprlistValue> boolexprlist
 %type <attribValue> attrib
 %type <whileValue> while
 %type <floatValue> FLOAT
@@ -170,7 +171,7 @@ varlist2:
 ;
 
 while:
-  T_WHILE T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
+  T_WHILE T_OPENPARENTESES boolexprlist T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
     $$ = ast_cmd_while_boolexpr($3, $6);
   }
   |
@@ -180,7 +181,7 @@ while:
 ;
 
 if:
-  T_IF T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
+  T_IF T_OPENPARENTESES boolexprlist T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
     $$ = ast_cmd_if_boolexpr($3, $6);
   }
   |
@@ -188,7 +189,7 @@ if:
     $$ = ast_cmd_if_expr($3, $6);
   }
   |
-  T_IF T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET else{
+  T_IF T_OPENPARENTESES boolexprlist T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET else{
     $$ = ast_cmd_ifelse_boolexpr($3, $6, $8);
   }
   |
@@ -237,6 +238,25 @@ boolexpr:
    expr EQUALS expr {
     $$ = ast_boolean_expr(EQUALS, $1, $3);
   }
+;
+
+boolexprlist:
+  boolexpr T_AND boolexprlist
+  {
+    $$ = ast_boolean_exprList_and($1, $3);
+  }
+  |
+  boolexpr T_OR boolexprlist
+  {
+    $$ = ast_boolean_exprList_or($1, $3);
+  }
+  |
+  boolexpr
+  {
+    $$ = ast_boolean_exprList_solo($1, NULL);
+  }
+;
+
 expr:
   INT {
     $$ = ast_integer($1);

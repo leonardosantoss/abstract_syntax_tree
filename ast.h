@@ -57,13 +57,25 @@ struct _BoolExpr {
   }attr;
 };
 
+struct _BoolExprList {
+  enum{
+    E_BOOLEXPR,
+    E_AND,
+    E_OR
+  }kind;
+  struct{
+    struct _BoolExpr* value;
+    struct _BoolExprList* next;
+  }list;
+};
+
 struct _While {
   enum{
     E_WHILE_EXPR,
     E_WHILE_BOOLEXPR
   }kind;
   union{
-    struct _BoolExpr* valueBoolExpr;
+    struct _BoolExprList* valueBoolExpr;
     struct _Expr *valueExpr;
   }type;
   struct _CmdList *test;
@@ -81,7 +93,7 @@ struct _If {
     E_IFELSE_BOOLEXPR
   }kind;
   union {
-    struct _BoolExpr* valueBoolExpr;
+    struct _BoolExprList* valueBoolExpr;
     struct _Expr *valueExpr;
   }type;
   union {
@@ -133,6 +145,7 @@ struct _CmdList
 
 typedef struct _Expr Expr; // Convenience typedef
 typedef struct _BoolExpr BoolExpr;
+typedef struct _BoolExprList BoolExprList;
 typedef struct _Attrib Attrib;
 typedef struct _While While;
 typedef struct _CharList CharList;
@@ -152,15 +165,18 @@ Expr* ast_expr_var(char *name);
 Expr* ast_operation(int operator, Expr* left, Expr* right);
 BoolExpr* ast_boolean(Expr *expr);
 BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right);
+BoolExprList* ast_boolean_exprList_and(BoolExpr* value, BoolExprList* next);
+BoolExprList* ast_boolean_exprList_or(BoolExpr* value, BoolExprList* next);
+BoolExprList* ast_boolean_exprList_solo(BoolExpr* value, BoolExprList* next);
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr );
 Attrib* ast_attrib_expr(char* name, Expr* expr );
 Attrib* ast_non_attrib(char* name);
 While* ast_cmd_while_expr(Expr* expr, CmdList* cmdlist);  //Shouldn´t be attrib, needs to be a cmdlist
-While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist);
+While* ast_cmd_while_boolexpr(BoolExprList* boolexprlist, CmdList* cmdlist);
 If* ast_cmd_if_expr(Expr* expr, CmdList* cmdList);
-If* ast_cmd_if_boolexpr(BoolExpr* boolexpr, CmdList* cmdList);
+If* ast_cmd_if_boolexpr(BoolExprList* boolexprlist, CmdList* cmdList);
 If* ast_cmd_ifelse_expr(Expr* expr, CmdList* cmdList, Else* elseexpr);
-If* ast_cmd_ifelse_boolexpr(BoolExpr* boolexpr, CmdList* cmdList, Else* elseexpr);
+If* ast_cmd_ifelse_boolexpr(BoolExprList* boolexprlist, CmdList* cmdList, Else* elseexpr);
 Else* ast_cmd_else_expr(CmdList* cmdList);
 CmdList* ast_cmdList(Cmd* cmd, CmdList* cmdList);
 Cmd* ast_cmd_attrib(Attrib* attrib);
