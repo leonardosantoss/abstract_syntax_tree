@@ -86,11 +86,36 @@ While* ast_cmd_while_expr(Expr* expr, CmdList* cmdlist){
   return node;
 }
 
+
+If* ast_cmd_if_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist){
+  If* node = (If*) malloc(sizeof(If));
+  node->kind = E_IF_BOOLEXPR;
+  node->type.valueBoolExpr = boolexpr;
+  node->test = cmdlist;
+  return node;
+}
+
+
+If* ast_cmd_if_expr(Expr* expr, CmdList* cmdlist){
+  If* node = (If*) malloc(sizeof(If));
+  node->type.valueExpr = expr;
+  node->test = cmdlist;
+  return node;
+}
+
 Cmd* ast_cmd_while(While* whileExpr)
 {
   Cmd* node = (Cmd*) malloc(sizeof(Cmd));
   node->kind = E_WHILE;
   node->type.While = whileExpr;
+  return node;
+}
+
+Cmd* ast_cmd_if(If* ifExpr)
+{
+  Cmd* node = (Cmd*) malloc(sizeof(Cmd));
+  node->kind = E_IF;
+  node->type.If = ifExpr;
   return node;
 }
 

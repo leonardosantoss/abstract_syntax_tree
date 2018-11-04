@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 92 "parser.bison" /* yacc.c:1919  */
+#line 94 "parser.bison" /* yacc.c:1919  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,9 +126,10 @@ union YYSTYPE
   CharList* varlistValue;
   CharList* varlist2Value;
   char* stringValue;
+  If* ifValue;
 
 
-#line 132 "parser.h" /* yacc.c:1919  */
+#line 133 "parser.h" /* yacc.c:1919  */
 };
 
 typedef union YYSTYPE YYSTYPE;

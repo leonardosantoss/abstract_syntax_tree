@@ -67,6 +67,7 @@
   CharList* varlistValue;
   CharList* varlist2Value;
   char* stringValue;
+  If* ifValue;
 
 }
 
@@ -85,6 +86,7 @@
 %type <scanfValue> scanf
 %type <varlistValue> varlist
 %type <varlist2Value> varlist2
+%type <ifValue> if
 
 
 // Use "%code requires" to make declarations go
@@ -133,6 +135,8 @@ cmd:
   printf { $$ = ast_cmd_printf($1); }
   |
   scanf { $$ = ast_cmd_scanf($1); }
+  |
+  if { $$ = ast_cmd_if($1); }
 ;
 
 printf:
@@ -172,6 +176,18 @@ while:
     $$ = ast_cmd_while_expr($3, $6);
   }
 ;
+
+if:
+  T_IF T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
+    $$ = ast_cmd_if_boolexpr($3, $6);
+  }
+  |
+  T_IF T_OPENPARENTESES expr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
+    $$ = ast_cmd_if_expr($3, $6);
+  }
+;
+
+
 
 attrib:
   T_INT NAME EQUALSIGN expr T_SEMICOLON{
