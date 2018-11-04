@@ -255,6 +255,21 @@ boolexprlist:
   {
     $$ = ast_boolean_exprList_solo($1, NULL);
   }
+  |
+  expr T_AND boolexprlist
+  {
+    $$ = ast_expr_exprList_and($1, $3);
+  }
+  |
+  expr T_OR boolexprlist
+  {
+    $$ = ast_expr_exprList_or($1, $3);
+  }
+  |
+  expr 
+  {
+    $$ = ast_expr_exprList_solo($1, NULL);
+  }
 ;
 
 expr:

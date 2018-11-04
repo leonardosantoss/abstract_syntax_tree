@@ -1,8 +1,8 @@
 int main()
 {
-  while(2 + 1 > 3 && 3 >= 3 - 1)
+  while(1 || 2 || 3 && 3 > 2)
   {
-    if(1>2 && 2 > 1){
+    if(1 && 2 && 3){
        printf("oi", a,b);
     }
     else{

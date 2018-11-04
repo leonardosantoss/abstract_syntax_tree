@@ -49,7 +49,7 @@ BoolExprList* ast_boolean_exprList_and(BoolExpr* value, BoolExprList* next)
 {
   BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
   list->kind = E_AND;
-  list->list.value = value;
+  list->list.type.value = value;
   list->list.next = next;
   return list;
 }
@@ -58,7 +58,7 @@ BoolExprList* ast_boolean_exprList_or(BoolExpr* value, BoolExprList* next)
 {
   BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
   list->kind = E_OR;
-  list->list.value = value;
+  list->list.type.value = value;
   list->list.next = next;
   return list;
 }
@@ -67,10 +67,41 @@ BoolExprList* ast_boolean_exprList_solo(BoolExpr* value, BoolExprList* next)
 {
   BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
   list->kind = E_BOOLEXPR;
-  list->list.value = value;
+  list->list.type.value = value;
   list->list.next = next;
   return list;
 }
+
+
+BoolExprList* ast_expr_exprList_and(Expr* value, BoolExprList* next)
+{
+  BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
+  list->kind = E_EXPRAND;
+  list->list.type.expr = value;
+  list->list.next = next;
+  return list;
+}
+
+BoolExprList* ast_expr_exprList_or(Expr* value, BoolExprList* next)
+{
+  BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
+  list->kind = E_EXPROR;
+  list->list.type.expr = value;
+  list->list.next = next;
+  return list;
+}
+
+BoolExprList* ast_expr_exprList_solo(Expr* value, BoolExprList* next)
+{
+  BoolExprList* list = (BoolExprList*) malloc(sizeof(BoolExprList));
+  list->kind = E_EXPR;
+  list->list.type.expr = value;
+  list->list.next = next;
+  return list;
+}
+
+
+
 
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr){
   Attrib* node = (Attrib*) malloc(sizeof(Attrib));

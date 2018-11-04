@@ -138,21 +138,34 @@ void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
 
 void printBoolExprList(BoolExprList* root, int nSpaces)
 {
-  printBoolExpr(root->list.value, nSpaces);
-  if(root->kind == E_AND)
-  {
+
+  if(root->kind == E_EXPR){
+    printExpr(root->list.type.expr, nSpaces);
+  }
+  else if(root->kind == E_EXPRAND){
+    printExpr(root->list.type.expr, nSpaces);
     print_aux(nSpaces);
     printf("&&\n");
   }
-  else if(root->kind == E_OR)
-  {
+  else if(root->kind == E_EXPROR){
+    printExpr(root->list.type.expr, nSpaces);
+    print_aux(nSpaces);
+    printf("||\n");
+  }
+  else if(root->kind == E_AND){
+    printBoolExpr(root->list.type.value, nSpaces);
+    print_aux(nSpaces);
+    printf("&&\n");
+  }
+  else if(root->kind == E_OR){
+    printBoolExpr(root->list.type.value, nSpaces);
     print_aux(nSpaces);
     printf("||\n");
   }
   while(root->list.next != NULL)
   {
     root = root->list.next;
-    printBoolExpr(root->list.value, nSpaces);
+    printBoolExprList(root, nSpaces);
   }
 }
 

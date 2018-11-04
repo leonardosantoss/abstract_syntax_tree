@@ -61,10 +61,16 @@ struct _BoolExprList {
   enum{
     E_BOOLEXPR,
     E_AND,
-    E_OR
+    E_OR,
+    E_EXPR,
+    E_EXPROR,
+    E_EXPRAND
   }kind;
   struct{
-    struct _BoolExpr* value;
+    union{
+      struct _BoolExpr* value;
+      struct _Expr* expr;
+    }type;
     struct _BoolExprList* next;
   }list;
 };
@@ -168,6 +174,12 @@ BoolExpr* ast_boolean_expr(int operator, Expr* left, Expr* right);
 BoolExprList* ast_boolean_exprList_and(BoolExpr* value, BoolExprList* next);
 BoolExprList* ast_boolean_exprList_or(BoolExpr* value, BoolExprList* next);
 BoolExprList* ast_boolean_exprList_solo(BoolExpr* value, BoolExprList* next);
+
+BoolExprList* ast_expr_exprList_and(Expr* value, BoolExprList* next);
+BoolExprList* ast_expr_exprList_or(Expr* value, BoolExprList* next);
+BoolExprList* ast_expr_exprList_solo(Expr* value, BoolExprList* next);
+
+
 Attrib* ast_attrib_expr_ct(char* name, Expr* expr );
 Attrib* ast_attrib_expr(char* name, Expr* expr );
 Attrib* ast_non_attrib(char* name);
