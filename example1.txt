@@ -3,7 +3,9 @@ int main()
    
    int a;
    while(1){
-       int x;
        scanf("", &a);
+       if(1>2){
+           printf("oi", a,b);
+       }
    }
 }

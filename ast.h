@@ -69,6 +69,18 @@ struct _While {
   struct _CmdList *test;
 };
 
+struct _If {
+  enum {
+    E_IF_EXPR,
+    E_IF_BOOLEXPR
+  }kind;
+  union {
+    struct _BoolExpr* valueBoolExpr;
+    struct _Expr *valueExpr;
+  }type;
+  struct _CmdList *test;
+};
+
 struct _CharList {
   char* value;
   struct _CharList* next;
@@ -90,13 +102,15 @@ struct _Cmd
     E_ATTRIB,
     E_WHILE,
     E_PRINTF,
-    E_SCANF
+    E_SCANF,
+    E_IF
   }kind;
   union{
     struct _Attrib *Attrib;
     struct _While *While;
     struct _Printf *Printf;
     struct _Scanf *Scanf;
+    struct _If *If;
   }type;
 };
 
@@ -117,6 +131,7 @@ typedef struct _Printf Printf;
 typedef struct _Cmd Cmd;
 typedef struct _CmdList CmdList;
 typedef struct _Scanf Scanf;
+typedef struct _If If;
 
 
 
@@ -132,11 +147,14 @@ Attrib* ast_attrib_expr(char* name, Expr* expr );
 Attrib* ast_non_attrib(char* name);
 While* ast_cmd_while_expr(Expr* expr, CmdList* cmdlist);  //Shouldn´t be attrib, needs to be a cmdlist
 While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist);
+If* ast_cmd_if_expr(Expr* expr, CmdList* cmdList);
+If* ast_cmd_if_boolexpr(BoolExpr* boolexpr, CmdList* cmdList);
 CmdList* ast_cmdList(Cmd* cmd, CmdList* cmdList);
 Cmd* ast_cmd_attrib(Attrib* attrib);
 Cmd* ast_cmd_while(While* whileExpr);
 Cmd* ast_cmd_printf(Printf* printfExpr);
 Cmd* ast_cmd_scanf(Scanf* scanfExpr);
+Cmd* ast_cmd_if(If* ifExpr);
 Printf* ast_cmd_printf_expr(char* value, CharList* charList);
 Scanf* ast_cmd_scanf_expr(char* value, CharList* charList);
 CharList* ast_cmd_charList(char* name, CharList* next);

@@ -29,6 +29,16 @@ void printPrintf(Printf* Printf, int nSpaces){
   }
 }
 
+void printScanf(Scanf* Scanf, int nSpaces){
+  print_aux(nSpaces);
+  printf("scanf\n");
+  print_aux(nSpaces+2);
+  printf("%s\n",  Scanf->value);
+  if(Scanf->varList != NULL){
+    printCharList(Scanf->varList, nSpaces+2);
+  }
+}
+
 void printExpr(Expr* expr, int nSpaces){
 
   if(expr->kind == E_INTEGER){
@@ -141,6 +151,22 @@ void printWhile(While* cmdWhile, int nSpaces){
     }
 }
 
+void printIf(If* cmdIf, int nSpaces){
+  if(cmdIf->kind == E_IF_BOOLEXPR){
+      print_aux(nSpaces);
+      printf("if\n");
+      printBoolExpr(cmdIf->type.valueBoolExpr, nSpaces+2);
+      printCmdList(cmdIf->test ,nSpaces+2);
+    }
+    else if(cmdIf->kind == E_IF_EXPR){
+      print_aux(nSpaces);
+      printf("if\n");
+      printExpr(cmdIf->type.valueExpr, nSpaces+2);
+      printCmdList(cmdIf->test ,nSpaces+4);
+    }
+}
+
+
 void printCmd(Cmd* cmd, int nSpaces)
 {
   if(cmd->kind == E_ATTRIB)
@@ -157,6 +183,14 @@ void printCmd(Cmd* cmd, int nSpaces)
   {
     print_aux(nSpaces);
     printPrintf(cmd->type.Printf, nSpaces+2);
+  }
+  else if (cmd->kind == E_SCANF){
+    print_aux(nSpaces);
+    printScanf(cmd->type.Scanf, nSpaces+2);
+  }
+  else if(cmd->kind == E_IF){
+    print_aux(nSpaces);
+    printIf(cmd->type.If, nSpaces+2);
   }
 }
 
