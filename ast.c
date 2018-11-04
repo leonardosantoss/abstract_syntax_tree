@@ -55,7 +55,7 @@ Attrib* ast_attrib_expr_ct(char* name, Expr* expr){
 
 Attrib* ast_attrib_expr(char* name, Expr* expr){
   Attrib* node = (Attrib*) malloc(sizeof(Attrib));
-  node->kind = E_ATTRIB;
+  node->kind = E_ATTRIBST;
   node->attr.att.name = name;
   node->attr.att.value = expr;
   return node;
@@ -98,10 +98,37 @@ If* ast_cmd_if_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist){
 
 If* ast_cmd_if_expr(Expr* expr, CmdList* cmdlist){
   If* node = (If*) malloc(sizeof(If));
+  node->kind = E_IF_EXPR;
   node->type.valueExpr = expr;
   node->test = cmdlist;
   return node;
 }
+
+If* ast_cmd_ifelse_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist, Else* elseexpr){
+  If* node = (If*) malloc(sizeof(If));
+  node->kind = E_IFELSE_BOOLEXPR;
+  node->type.valueBoolExpr = boolexpr;
+  node->test = cmdlist;
+  node->withElse.valueElse = elseexpr;
+  return node;
+}
+
+
+If* ast_cmd_ifelse_expr(Expr* expr, CmdList* cmdlist, Else* elseexpr){
+  If* node = (If*) malloc(sizeof(If));
+  node->kind = E_IFELSE_EXPR;
+  node->type.valueExpr = expr;
+  node->test = cmdlist;
+  node->withElse.valueElse = elseexpr;
+  return node;
+}
+
+Else* ast_cmd_else_expr(CmdList* cmdList){
+  Else* node = (Else*) malloc(sizeof(Else));
+  node->test = cmdList;
+  return node;
+}
+
 
 Cmd* ast_cmd_while(While* whileExpr)
 {
@@ -149,7 +176,7 @@ Printf* ast_cmd_printf_expr(char* value,CharList* charList)
   node->value = value;
   node->varList = charList;
   return node;
-  
+
 }
 
 Scanf* ast_cmd_scanf_expr(char* value,CharList* charList)
@@ -158,7 +185,7 @@ Scanf* ast_cmd_scanf_expr(char* value,CharList* charList)
   node->value = value;
   node->varList = charList;
   return node;
-  
+
 }
 
 

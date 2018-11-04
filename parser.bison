@@ -68,6 +68,7 @@
   CharList* varlist2Value;
   char* stringValue;
   If* ifValue;
+  Else* elseValue;
 
 }
 
@@ -87,6 +88,7 @@
 %type <varlistValue> varlist
 %type <varlist2Value> varlist2
 %type <ifValue> if
+%type <elseValue> else
 
 
 // Use "%code requires" to make declarations go
@@ -103,7 +105,7 @@ extern FILE* yyin;
 extern void yyerror(const char* msg);
 CmdList* root;
 BoolExpr* root1;
-Attrib* root2;  
+Attrib* root2;
 While* root3;
 
 }
@@ -126,7 +128,7 @@ cmdList:
     $$ = ast_cmdList($1, NULL);
   }
 ;
-  
+
 cmd:
   attrib { $$ = ast_cmd_attrib($1); }
   |
@@ -152,7 +154,7 @@ scanf:
     { $$ = ast_cmd_scanf_expr($3, $4); }
   |
   T_SCANF T_OPENPARENTESES STRING T_CLOSEPARENTESES T_SEMICOLON
-    { $$ = ast_cmd_scanf_expr($3, NULL); }  
+    { $$ = ast_cmd_scanf_expr($3, NULL); }
 ;
 
 varlist:
@@ -185,9 +187,21 @@ if:
   T_IF T_OPENPARENTESES expr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
     $$ = ast_cmd_if_expr($3, $6);
   }
+  |
+  T_IF T_OPENPARENTESES boolexpr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET else{
+    $$ = ast_cmd_ifelse_boolexpr($3, $6, $8);
+  }
+  |
+  T_IF T_OPENPARENTESES expr T_CLOSEPARENTESES T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET else{
+    $$ = ast_cmd_ifelse_expr($3, $6, $8);
+  }
 ;
 
-
+else:
+  T_ELSE T_OPENCURLYBRACKET cmdList T_CLOSECURLYBRACKET{
+    $$ = ast_cmd_else_expr($3);
+  }
+;
 
 attrib:
   T_INT NAME EQUALSIGN expr T_SEMICOLON{

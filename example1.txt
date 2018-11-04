@@ -1,11 +1,12 @@
 int main()
 {
-   
-   int a;
-   while(1){
-       scanf("", &a);
-       if(1>2){
-           printf("oi", a,b);
-       }
+   if(1>2){
+       printf("oi", a,b);
+   }
+   else{
+      printf("funceminando");
+      int a;
+      scanf("inin", &a);
+      printf("outout", a, b);
    }
 }

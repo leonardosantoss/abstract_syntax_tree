@@ -69,13 +69,13 @@ void printExpr(Expr* expr, int nSpaces){
       case MOD:
         printf("%c\n", '%');
         break;
-              
+
     }
 
     printExpr(expr->attr.op.left, nSpaces+2);
     printExpr(expr->attr.op.right, nSpaces+2);
   }
-  
+
 }
 
 void printVar(Expr* value, char* name, int nSpaces){
@@ -92,7 +92,7 @@ void printAttrib(Attrib* attrib, int nSpaces){
     printf("int\n");
     printVar(attrib->attr.attct.value, attrib->attr.attct.name, nSpaces+2);
   }
-  else if(attrib->kind == E_ATTRIB)
+  else if(attrib->kind == E_ATTRIBST)
   {
      printVar(attrib->attr.att.value, attrib->attr.att.name, nSpaces);
   }
@@ -127,7 +127,7 @@ void printBoolExpr(BoolExpr* boolExpr, int nSpaces){
         break;
       case EQUALS:
         printf("==\n");
-        break;  
+        break;
 
     }
     printExpr(boolExpr->attr.op.left, nSpaces+2);
@@ -147,8 +147,15 @@ void printWhile(While* cmdWhile, int nSpaces){
       print_aux(nSpaces);
       printf("while\n");
       printExpr(cmdWhile->type.valueExpr, nSpaces+2);
-      printCmdList(cmdWhile->test ,nSpaces+4);
+      printCmdList(cmdWhile->test ,nSpaces+2);
     }
+}
+
+void printElse(Else* cmdElse, int nSpaces)
+{
+    print_aux(nSpaces);
+    printf("else\n");
+    printCmdList(cmdElse->test ,nSpaces+2);
 }
 
 void printIf(If* cmdIf, int nSpaces){
@@ -156,14 +163,28 @@ void printIf(If* cmdIf, int nSpaces){
       print_aux(nSpaces);
       printf("if\n");
       printBoolExpr(cmdIf->type.valueBoolExpr, nSpaces+2);
-      printCmdList(cmdIf->test ,nSpaces+2);
-    }
-    else if(cmdIf->kind == E_IF_EXPR){
-      print_aux(nSpaces);
-      printf("if\n");
-      printExpr(cmdIf->type.valueExpr, nSpaces+2);
       printCmdList(cmdIf->test ,nSpaces+4);
     }
+  else if(cmdIf->kind == E_IF_EXPR){
+    print_aux(nSpaces);
+    printf("if\n");
+    printExpr(cmdIf->type.valueExpr, nSpaces+2);
+    printCmdList(cmdIf->test ,nSpaces+4);
+  }
+  else if(cmdIf->kind == E_IFELSE_BOOLEXPR){
+    print_aux(nSpaces);
+    printf("if\n");
+    printBoolExpr(cmdIf->type.valueBoolExpr, nSpaces+2);
+    printCmdList(cmdIf->test ,nSpaces+4);
+    printElse(cmdIf->withElse.valueElse ,nSpaces);
+  }
+  else if(cmdIf->kind == E_IFELSE_EXPR){
+    print_aux(nSpaces);
+    printf("if\n");
+    printExpr(cmdIf->type.valueExpr, nSpaces+2);
+    printCmdList(cmdIf->test ,nSpaces+4);
+    printElse(cmdIf->withElse.valueElse ,nSpaces);
+  }
 }
 
 
@@ -171,36 +192,36 @@ void printCmd(Cmd* cmd, int nSpaces)
 {
   if(cmd->kind == E_ATTRIB)
   {
-    print_aux(nSpaces);
+    //print_aux(nSpaces);
     printAttrib(cmd->type.Attrib, nSpaces+2);
   }
   else if(cmd->kind == E_WHILE)
   {
-    print_aux(nSpaces);
+    //print_aux(nSpaces);
     printWhile(cmd->type.While, nSpaces+2);
   }
   else if(cmd->kind == E_PRINTF)
   {
-    print_aux(nSpaces);
+    //print_aux(nSpaces);
     printPrintf(cmd->type.Printf, nSpaces+2);
   }
   else if (cmd->kind == E_SCANF){
-    print_aux(nSpaces);
+    //print_aux(nSpaces);
     printScanf(cmd->type.Scanf, nSpaces+2);
   }
   else if(cmd->kind == E_IF){
-    print_aux(nSpaces);
+    //print_aux(nSpaces);
     printIf(cmd->type.If, nSpaces+2);
   }
 }
 
 void printCmdList(CmdList* root, int nSpaces){
     printCmd(root->Cmd, nSpaces);
-     
+
     while(root->next != NULL)
     {
       root = root->next;
-      printCmd(root->Cmd, nSpaces);      
+      printCmd(root->Cmd, nSpaces);
     }
 }
 
@@ -218,14 +239,14 @@ int main(int argc, char** argv) {
     //printBoolExpr(root, 0);
     //printAttrib(root2, 0);
     //printWhile(root3, 0);
-    
+
     printf("int main()\n");
     printCmd(root->Cmd, 0);
-     
+
     while(root->next != NULL)
     {
       root = root->next;
-      printCmd(root->Cmd, 0);      
+      printCmd(root->Cmd, 0);
     }
 
   }

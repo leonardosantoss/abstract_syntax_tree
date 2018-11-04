@@ -8,7 +8,7 @@
 
 struct _Attrib{
   enum{
-    E_ATTRIB,
+    E_ATTRIBST,
     E_ATTRIBCT,
     E_NONATTRIB
   }kind;
@@ -26,7 +26,7 @@ struct _Attrib{
 };
 
 struct _Expr {
-  enum { 
+  enum {
     E_INTEGER,
     E_VAR,
     E_OPERATION
@@ -34,8 +34,8 @@ struct _Expr {
   union {
     int value; // for integer values
     char* var;
-    struct { 
-      int operator; // PLUS, MINUS, etc 
+    struct {
+      int operator; // PLUS, MINUS, etc
       struct _Expr* left;
       struct _Expr* right;
     } op; // for binary expressions
@@ -69,15 +69,24 @@ struct _While {
   struct _CmdList *test;
 };
 
+struct _Else{
+  struct _CmdList *test;
+};
+
 struct _If {
   enum {
     E_IF_EXPR,
-    E_IF_BOOLEXPR
+    E_IF_BOOLEXPR,
+    E_IFELSE_EXPR,
+    E_IFELSE_BOOLEXPR
   }kind;
   union {
     struct _BoolExpr* valueBoolExpr;
     struct _Expr *valueExpr;
   }type;
+  union {
+    struct _Else *valueElse;
+  }withElse;
   struct _CmdList *test;
 };
 
@@ -132,6 +141,7 @@ typedef struct _Cmd Cmd;
 typedef struct _CmdList CmdList;
 typedef struct _Scanf Scanf;
 typedef struct _If If;
+typedef struct _Else Else;
 
 
 
@@ -149,6 +159,9 @@ While* ast_cmd_while_expr(Expr* expr, CmdList* cmdlist);  //Shouldn´t be attrib
 While* ast_cmd_while_boolexpr(BoolExpr* boolexpr, CmdList* cmdlist);
 If* ast_cmd_if_expr(Expr* expr, CmdList* cmdList);
 If* ast_cmd_if_boolexpr(BoolExpr* boolexpr, CmdList* cmdList);
+If* ast_cmd_ifelse_expr(Expr* expr, CmdList* cmdList, Else* elseexpr);
+If* ast_cmd_ifelse_boolexpr(BoolExpr* boolexpr, CmdList* cmdList, Else* elseexpr);
+Else* ast_cmd_else_expr(CmdList* cmdList);
 CmdList* ast_cmdList(Cmd* cmd, CmdList* cmdList);
 Cmd* ast_cmd_attrib(Attrib* attrib);
 Cmd* ast_cmd_while(While* whileExpr);
