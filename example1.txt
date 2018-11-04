@@ -1,6 +1,6 @@
 int main()
 {
-  while(1 || 2 || 3 && 3 > 2)
+  while(1 || 2 || 3 && 3+2 > 2)
   {
     if(1 && 2 && 3){
        printf("oi", a,b);
